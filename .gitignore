@@ -1,0 +1,38 @@
+# Environment files
+.env
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Editor directories
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Python
+*.egg-info/
+dist/
+build/
+pip-log.txt
+*.log
+.pytest_cache/
+.coverage
+
+# FastAPI / Uvicorn
+*.db
