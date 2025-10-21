@@ -1,7 +1,9 @@
 # pip3 list : see what is installed in global denpendencies
 # mkdir fastApi
 # python3 -m venv .venv : setup venv
-# source .venv/bin/activate : ###activate virtual environment####
+# MAC: source .venv/bin/activate : ###activate virtual environment####
+# Windows (powershell): .venv\Scripts\Activate.ps1
+# Windows (cmd): .venv/bin/activate.bat
 # pip list : What is inside pip env
 # deactivate : deactivate venv
 # pip install fastapi "uvicorn[standard]" : install dependencies: 
@@ -14,6 +16,12 @@
 # pip install sqlite (pysqlite3) : install sqllite
 # pip install python-dotenv : install .env
 # pip install sqlalchemy: Install SQLAchemy ORM in project:
+# Windows: (Check version of install): python -m poetry --version
+# WIndows: (IAC): (.venv) python -m hostmaster_iac_dev.main
+# Windows: (IAC): (.venv): python = ">=3.11,<3.14"
+# Windows: (IAC): Run hostmaster: python -m poetry run hostmaster-iac-dev
+# Windows: (FRONTEND): python -m poetry run hostmaster-frontend-dev
+# Windows: (BACKEND): python -m poetry run hostmaster-backend-dev
 # pip freeze > requirements.txt : create dependencies file
 # openssl rand -hex 32 : generate a secret key
 # brew list : check if sqllite installed for mac
