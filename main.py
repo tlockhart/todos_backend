@@ -1,13 +1,12 @@
 from fastapi import FastAPI
-import models
-from database import engine
+from .models import Base
+from .database import engine
+from .routers import auth, todos, admin, users
+from fastapi.middleware.cors import CORSMiddleware
 
 """ 
 Step 1 of 2: Include auth,py files from routers directory
 """
-from routers import auth, todos, admin, users
-
-from fastapi.middleware.cors import CORSMiddleware
 
 # Root folder uses our fastAPI Application
 app = FastAPI()
@@ -30,12 +29,14 @@ app.add_middleware(
 
 # Create a new todoapp db From database/engine
 # Only ran if todos.db does not exist
-models.Base.metadata.create_all(bind=engine)
+Base.metadata.create_all(bind=engine)
 
-    
-"""
-Step 2 of 2: INCLUDE API Inputs from ROUTERS
-"""
+# Create Health Check route
+@app.get("/healthy")
+def health_check():
+    return {"status": "Healthy"}
+
+
 app.include_router(auth.router)
 app.include_router(todos.router)
 app.include_router(admin.router)

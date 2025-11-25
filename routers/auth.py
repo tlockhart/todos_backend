@@ -7,10 +7,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from starlette import status
-from database import SessionLocal
+
+from ..database import SessionLocal
 
 # Import user model
-from models import Users
+from ..models import Users
 
 from passlib.context import CryptContext
 

@@ -4,6 +4,7 @@
 # MAC: source .venv/bin/activate : ###activate virtual environment####
 # Windows (powershell): .venv\Scripts\Activate.ps1
 # Windows (cmd): .venv/bin/activate.bat
+# powershell: .venv\Scripts\Activate.ps1
 # pip list : What is inside pip env
 # deactivate : deactivate venv
 # pip install fastapi "uvicorn[standard]" : install dependencies: 
@@ -23,6 +24,7 @@
 # Windows: (FRONTEND): python -m poetry run hostmaster-frontend-dev
 # Windows: (BACKEND): python -m poetry run hostmaster-backend-dev
 # pip freeze > requirements.txt : create dependencies file
+# pip install -r requirements.txt --no-user, Load requirements
 # openssl rand -hex 32 : generate a secret key
 # brew list : check if sqllite installed for mac
 # brew install sqlite : install if not already installed
@@ -87,4 +89,9 @@ This avoids the mismatch because template0 is a barebones template.
 ## alembic downgrade -1 : Run our downgrade migration to our database
 ### Version: def downgrade() -> None: op.drop_column('users', 'phone_number')
 ### Terminal: python -m alembic downgrade -1
+
+## TEst your connection from root (backend):
+### Start postgress db: Get-Service -Name "*postgres*"
+### uvicorn main:app --reload --port 8001
+### uvicorn todos_backend.main:app --reload --port 8001
 

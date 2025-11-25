@@ -5,8 +5,9 @@ from sqlalchemy.orm import Session
 # Step 1 of 2: APIRouter allows us to route from main.py API file to our auth.py file
 from fastapi import APIRouter, Depends, HTTPException, Path
 from starlette import status
-from models import Todos
-from database import SessionLocal
+
+from ..models import Todos
+from ..database import SessionLocal
 
 """
 Import get_current_user from auth (to validate JWT, and turn into username, id, payload), 
@@ -26,10 +27,9 @@ Create and return a databas session object
 def get_db():
     db = SessionLocal()
     try:
-        # Only the code prior to and including the yield statement exe, before sending a response
-        # run get_db
-        # return db
+        # Only the code prior to and including the yield statement executed, before sending a response
         yield db
+        # After response is delivered close db
     finally:
         db.close()
 

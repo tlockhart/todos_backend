@@ -1,5 +1,7 @@
-from database import Base
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from .database import Base
+from sqlalchemy import String, Boolean, ForeignKey
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from typing import Optional
 
 # User Model
 # uvicorn main:app --reload
@@ -7,26 +9,32 @@ class Users(Base):
     # For sqlAlchemy to name db table
     __tablename__ = 'users'
 
-    # Define columns:
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True)
-    username = Column(String, unique=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
-    role = Column(String)
-    phone_number = Column(String)
+    # Define columns using SQLAlchemy 2.0 style:
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(String, unique=True)
+    username: Mapped[str] = mapped_column(String, unique=True)
+    first_name: Mapped[str] = mapped_column(String)
+    last_name: Mapped[str] = mapped_column(String)
+    hashed_password: Mapped[str] = mapped_column(String)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    role: Mapped[str] = mapped_column(String)
+    phone_number: Mapped[Optional[str]] = mapped_column(String, nullable=True)
+    
+    # Relationship to todos
+    todos: Mapped[list["Todos"]] = relationship(back_populates="owner")
 
 # Todos Model
 class Todos(Base):
     # For sqlAlchemy to name db table
     __tablename__ = 'todos'
 
-    # Define columns:
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    description = Column(String)
-    priority = Column(Integer)
-    complete = Column(Boolean, default=False)
-    owner_id = Column(Integer, ForeignKey("users.id"))
+    # Define columns using SQLAlchemy 2.0 style:
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    title: Mapped[str] = mapped_column(String)
+    description: Mapped[str] = mapped_column(String)
+    priority: Mapped[int] = mapped_column()
+    complete: Mapped[bool] = mapped_column(Boolean, default=False)
+    owner_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    
+    # Relationship to user
+    owner: Mapped["Users"] = relationship(back_populates="todos")
