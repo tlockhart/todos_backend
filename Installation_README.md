@@ -1,6 +1,6 @@
 # pip3 list : see what is installed in global denpendencies
 # mkdir fastApi
-# python3 -m venv .venv : setup venv
+# python3 -m venv .venv : setup venv mac
 # MAC: source .venv/bin/activate : ###activate virtual environment####
 # Windows (powershell): .venv\Scripts\Activate.ps1
 # Windows (cmd): .venv/bin/activate.bat
@@ -61,7 +61,7 @@ uvicorn main:app --reload
 ## sudo mkdir -p /etc/paths.d &&
 ## echo /Applications/Postgres.app/Contents/Versions/latest/bin | sudo tee /etc/paths.d/postgresapp
 ## Password: password
-
+## Sign in user: codingwithroby, pw: password
 """
 ✅ Fix in pgAdmin 4
 	1.	Right-click → Create → Database
@@ -95,8 +95,9 @@ This avoids the mismatch because template0 is a barebones template.
 ### Open mySQL Program
 ### Click Start MySQL Server
 ### FASTAPI is the project
-### First activate .venv from todos_backend
-### cd back to FASTAPI
-### run from package: uvicorn todos_backend.main:app --reload
+### First activate .venv from fastAPI project
+### source .venv/bin/activate
+### run Application from package: uvicorn todos_backend.main:app --reload
 ### You should be able to reach: http://127.0.0.1:8000/healthy
-
+# Disable warnings:
+## pytest --disable-warnings: hide pytest warnings

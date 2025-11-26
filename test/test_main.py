@@ -1,10 +1,10 @@
 from fastapi.testclient import TestClient # create a test client for our app
-import main # import main file
+from ..main import app # import main file
 from fastapi import status
 # import models
 # models.Base.metadata.create_all(bind=engine)
 
-client = TestClient(main.app)
+client = TestClient(app)
 
 
 def test_return_health_check():

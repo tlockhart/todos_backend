@@ -1,4 +1,4 @@
-from .database import Base
+from .utils.database.connection import Base
 from sqlalchemy import String, Boolean, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from typing import Optional
