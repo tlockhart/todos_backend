@@ -92,6 +92,11 @@ This avoids the mismatch because template0 is a barebones template.
 
 ## TEst your connection from root (backend):
 ### Start postgress db: Get-Service -Name "*postgres*"
-### uvicorn main:app --reload --port 8001
-### uvicorn todos_backend.main:app --reload --port 8001
+### Open mySQL Program
+### Click Start MySQL Server
+### FASTAPI is the project
+### First activate .venv from todos_backend
+### cd back to FASTAPI
+### run from package: uvicorn todos_backend.main:app --reload
+### You should be able to reach: http://127.0.0.1:8000/healthy
 
