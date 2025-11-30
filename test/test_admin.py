@@ -1,7 +1,7 @@
+from .utils import *
 from fastapi import status
 from fastapi.testclient import TestClient
-from ..main import app
-from ..models import Todos
+
 
 from ..utils.database.connection import get_db_session, get_current_user
 from .utils import override_get_db_session, override_get_current_user, TestingSessionLocal

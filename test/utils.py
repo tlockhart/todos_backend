@@ -1,8 +1,12 @@
 from sqlalchemy import create_engine, delete
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
-from ..models import Todos
+from ..models import Todos, Users
+from ..routers.auth import bcrypt_context
 from ..utils.database.connection import Base
+from ..main import app
+from fastapi.testclient import TestClient
+client = TestClient(app)
 
 import pytest
 
@@ -32,7 +36,7 @@ def override_get_db_session():
 def override_get_current_user():
     return {"username": "tlockhart6", "id": 1, "user_role": "admin"}
 
-# Add Fixture
+# Add Todo Fixture
 @pytest.fixture
 def test_todo():
     todo = Todos(
@@ -64,3 +68,24 @@ def test_todo():
         db.commit()
     finally:
         db.close()
+        
+# Add User Fixture to add one user to the database and delete when done
+@pytest.fixture
+def test_user():
+    user = Users(
+        username="codingwithrobytest",
+        email="codingwithrobytest@email.com",
+        first_name="Eric",
+        last_name="Roby",
+        hashed_password=bcrypt_context.hash("testpassword"),
+        role="admin",
+        phone_number="(111)-111-1111",
+    )
+    
+    db = TestingSessionLocal()
+    db.add(user)
+    db.commit()
+    yield user
+    with engine.connect() as connection:
+        connection.execute(delete(Users))
+        connection.commit() 

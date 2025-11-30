@@ -64,7 +64,7 @@ db_dependency = Annotated[Session, Depends(get_db_session)]
 
 
 # Method passed username and password, and db to verfity password matches users hashed_password
-def authenticate_user(username: str, password: str, db):
+def authenticate_user(db, username: str, password: str):
     stmt = select(Users).where(Users.username == username)
     user = db.scalars(stmt).first()
     if not user:
@@ -127,7 +127,7 @@ async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: db_dependency
 ):
     # Call verify user password
-    user = authenticate_user(form_data.username, form_data.password, db)
+    user = authenticate_user(db, form_data.username, form_data.password)
     # If no user raise an error
     if not user:
         raise HTTPException(
