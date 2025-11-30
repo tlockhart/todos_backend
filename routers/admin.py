@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from starlette import status
 
 from ..models import Todos
+from sqlalchemy import select, delete
 from ..utils.database.connection import get_db_session, get_current_user
 
 # ⬅ every route in this file gets prefixed with /admin
@@ -27,7 +28,8 @@ ADMIN ENDPOINTS
 async def read_all(user: user_dependency, db: db_dependency):
     if user is None or user.get("user_role") != "admin":
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    return db.query(Todos).all()
+    stmt = select(Todos)
+    return db.scalars(stmt).all()
 
 
 # Delete a todo_id if admin
@@ -42,10 +44,11 @@ async def delete_todo(
         raise HTTPException(
             status_code=401, detail="Authentication Failed on user or user role"
         )
-    todo_model = db.query(Todos).filter(Todos.id == todo_id).first()
+    todo_model = db.get(Todos, todo_id)
     if todo_model is None:
         raise HTTPException(status_code=404, detail="Todo not found.")
-    db.query(Todos).filter(Todos.id == todo_id).delete()
+    stmt = delete(Todos).where(Todos.id == todo_id)
+    db.execute(stmt)
     db.commit()
 
     return {"message": "todo deleted"}

@@ -12,6 +12,7 @@ from ..utils.database.connection import get_db_session, get_current_user
 
 # Import user model
 from ..models import Users
+from sqlalchemy import select
 
 from passlib.context import CryptContext
 
@@ -64,7 +65,8 @@ db_dependency = Annotated[Session, Depends(get_db_session)]
 
 # Method passed username and password, and db to verfity password matches users hashed_password
 def authenticate_user(username: str, password: str, db):
-    user = db.query(Users).filter(Users.username == username).first()
+    stmt = select(Users).where(Users.username == username)
+    user = db.scalars(stmt).first()
     if not user:
         return False
     if not bcrypt_context.verify(password, user.hashed_password):

@@ -7,7 +7,7 @@ from starlette import status
 from ..models import Users
 from ..utils.database.connection import get_db_session
 
-from ..utils.database.connection import get_current_user 
+from ..utils.database.connection import get_current_user
 from passlib.context import CryptContext
 
 # ⬅ every route in this file gets prefixed with /user
@@ -33,7 +33,7 @@ class UserVerification(BaseModel):
 async def get_user(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    return db.query(Users).filter(Users.id == user.get("id")).first()
+    return db.get(Users, user.get("id"))
 
 
 # Change password
@@ -43,7 +43,7 @@ async def change_password(
 ):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    user_model = db.query(Users).filter(Users.id == user.get("id")).first()
+    user_model = db.get(Users, user.get("id"))
 
     if not bcrypt_context.verify(
         user_verification.password, user_model.hashed_password
@@ -61,7 +61,7 @@ async def change_phone_number(
 ):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
-    user_model = db.query(Users).filter(Users.id == user.get("id")).first()
+    user_model = db.get(Users, user.get("id"))
 
     # Update phone_number
     user_model.phone_number = phone_number

@@ -7,13 +7,13 @@ from fastapi import APIRouter, Depends, HTTPException, Path
 from starlette import status
 
 from ..models import Todos
+from sqlalchemy import select, delete
 
 """
 Import get_current_user from auth (to validate JWT, and turn into username, id, payload), 
 see below# The leading dot (.) tells Python to import from the current package/module directory
 """
 from ..utils.database.connection import get_db_session, get_current_user
-
 
 
 # Use APIRouter to define routes
@@ -49,7 +49,8 @@ async def read_all(user: user_dependency, db: db_dependency):
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
     # Pass in the required model to the query function
-    return db.query(Todos).filter(Todos.owner_id == user.get("id")).all()
+    stmt = select(Todos).where(Todos.owner_id == user.get("id"))
+    return db.scalars(stmt).all()
 
 
 """
@@ -57,7 +58,8 @@ async def read_all(user: user_dependency, db: db_dependency):
 # async def read_all(db: Annotated[Session, Depends(get_db_session)]):
 async def read_all(db: db_dependency):
     # Pass in the required model to the query function
-    return db.query(Todos).all()
+    stmt = select(Todos)
+    return db.scalars(stmt).all()
 """
 
 
@@ -73,12 +75,9 @@ async def read_todo(
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
 
-    todo_model = (
-        db.query(Todos)
-        .filter(Todos.id == todo_id)
-        .filter(Todos.owner_id == user.get("id"))
-        .first()
-    )
+    todo_model = db.get(Todos, todo_id)
+    if todo_model is not None and todo_model.owner_id != user.get("id"):
+        todo_model = None
     if todo_model is not None:
         return todo_model
     raise HTTPException(status_code=404, detail="Todo not found.")
@@ -140,12 +139,9 @@ async def update_todo(
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
 
-    todo_model = (
-        db.query(Todos)
-        .filter(Todos.id == todo_id)
-        .filter(Todos.owner_id == user.get("id"))
-        .first()
-    )
+    todo_model = db.get(Todos, todo_id)
+    if todo_model is not None and todo_model.owner_id != user.get("id"):
+        todo_model = None
 
     if todo_model is None:
         raise HTTPException(status_code=404, detail="Todo not found.")
@@ -194,18 +190,14 @@ async def delete_todo(
     if user is None:
         raise HTTPException(status_code=401, detail="Authentication Failed")
 
-    todo_model = (
-        db.query(Todos)
-        .filter(Todos.id == todo_id)
-        .filter(Todos.owner_id == user.get("id"))
-        .first()
-    )
+    todo_model = db.get(Todos, todo_id)
+    if todo_model is not None and todo_model.owner_id != user.get("id"):
+        todo_model = None
     if todo_model is None:
         raise HTTPException(status_code=404, detail="Todo not found.")
-    db.query(Todos).filter(Todos.id == todo_id).filter(
-        Todos.owner_id == user.get("id")
-    ).delete()
-
+    # perform delete using SQLAlchemy 2.0 style
+    stmt = delete(Todos).where(Todos.id == todo_id, Todos.owner_id == user.get("id"))
+    db.execute(stmt)
     db.commit()
 
     return {"message": "delete successfully", "todo_id": todo_model.id}

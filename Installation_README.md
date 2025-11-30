@@ -90,7 +90,7 @@ This avoids the mismatch because template0 is a barebones template.
 ### Version: def downgrade() -> None: op.drop_column('users', 'phone_number')
 ### Terminal: python -m alembic downgrade -1
 
-## TEst your connection from root (backend):
+## TEst your connection from project (fastAPI):
 ### Start postgress db: Get-Service -Name "*postgres*"
 ### Open mySQL Program
 ### Click Start MySQL Server
