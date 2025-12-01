@@ -25,6 +25,16 @@ Base.metadata.create_all(bind=engine)
 
 
 def override_get_db_session():
+    """
+    Override the database session dependency for testing.
+    
+    Creates a test database session using SQLite instead of the production database.
+    This generator function yields a database session and ensures it's properly closed
+    after use.
+    
+    Yields:
+        Session: A SQLAlchemy database session for testing.
+    """
     db = TestingSessionLocal()
     try:
         yield db
@@ -34,11 +44,34 @@ def override_get_db_session():
 
 # Mock user
 def override_get_current_user():
+    """
+    Override the current user dependency for testing.
+    
+    Returns a mock authenticated user with admin privileges, bypassing the actual
+    authentication process during tests.
+    
+    Returns:
+        dict: A dictionary containing mock user information with keys:
+            - username (str): The mock username
+            - id (int): The mock user ID
+            - user_role (str): The mock user role
+    """
     return {"username": "tlockhart6", "id": 1, "user_role": "admin"}
 
 # Add Todo Fixture
 @pytest.fixture
 def test_todo():
+    """
+    Pytest fixture that provides a test todo item.
+    
+    Creates a fresh todo item in the test database before each test and ensures
+    the todos table is clean both before and after the test runs. The fixture
+    clears any existing todos, adds a single test todo, and yields it for use
+    in tests.
+    
+    Yields:
+        Todos: A todo object with predefined test data.
+    """
     todo = Todos(
         title="Learn to code!",
         description="Need to learn everyday!",
@@ -72,6 +105,16 @@ def test_todo():
 # Add User Fixture to add one user to the database and delete when done
 @pytest.fixture
 def test_user():
+    """
+    Pytest fixture that provides a test user.
+    
+    Creates a test user with admin role and hashed password in the test database
+    before each test. The user is automatically deleted from the database after
+    the test completes to ensure a clean state.
+    
+    Yields:
+        Users: A user object with predefined test credentials and admin role.
+    """
     user = Users(
         username="codingwithrobytest",
         email="codingwithrobytest@email.com",
