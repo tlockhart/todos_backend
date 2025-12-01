@@ -4,6 +4,7 @@ from ..routers.auth import get_db_session, authenticate_user, create_access_toke
 from jose import jwt
 from datetime import timedelta
 import pytest
+from fastapi import HTTPException
 
 
 app.dependency_overrides[get_db_session] = override_get_db_session
@@ -47,3 +48,14 @@ async def test_get_current_user_valid_token():
     user = await get_current_user(token=token)
     assert user == {'username': 'testuser', 'id': '1', 'user_role': 'admin'}
     
+@pytest.mark.anyio
+async def test_get_current_user_missing_payload():
+    encode={'role': 'user'}
+    token=jwt.encode(encode, SECRET_KEY, algorithm=ALGORITHM)
+    
+    # throw and execption, because encode is corrupted
+    with pytest.raises(HTTPException) as exc_info:
+        await get_current_user(token=token)
+        
+    assert exc_info.value.status_code == 401    
+    assert exc_info.value.detail == 'Could not validate username or user_id.'
