@@ -1,7 +1,7 @@
 from typing import Annotated
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException, Path
+from fastapi import APIRouter, Depends, HTTPException, Query
 from starlette import status
 
 from ..models import Users
@@ -64,6 +64,19 @@ async def change_phone_number(
     user_model = db.get(Users, user.get("id"))
 
     # Update phone_number
+    user_model.phone_number = phone_number
+    db.add(user_model)
+    db.commit()
+
+
+# Change phone_number using query parameter:
+@router.put("/phonenumber", status_code=status.HTTP_204_NO_CONTENT)
+async def change_phone_number_query(
+    user: user_dependency, db: db_dependency, phone_number: str = Query(...)
+):
+    if user is None:
+        raise HTTPException(status_code=401, detail="Authentication Failed")
+    user_model = db.get(Users, user.get("id"))
     user_model.phone_number = phone_number
     db.add(user_model)
     db.commit()
