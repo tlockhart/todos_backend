@@ -101,3 +101,6 @@ This avoids the mismatch because template0 is a barebones template.
 ### You should be able to reach: http://127.0.0.1:8000/healthy
 # Disable warnings:
 ## pytest --disable-warnings: hide pytest warnings
+
+# Test Commands:
+## pytest -v : verbose

@@ -3,13 +3,21 @@ from .models import Base
 from .utils.database.connection import engine
 from .routers import auth, todos, admin, users
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
 """ 
 Step 1 of 2: Include auth,py files from routers directory
 """
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Create a new todoapp db From database/engine
+    # Only ran if todos.db does not exist
+    Base.metadata.create_all(bind=engine)
+    yield
+
 # Root folder uses our fastAPI Application
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 # Allow requests from your frontend
 origins = [
@@ -26,10 +34,6 @@ app.add_middleware(
     allow_methods=["*"],            # Allow all HTTP methods
     allow_headers=["*"],            # Allow all headers
 )
-
-# Create a new todoapp db From database/engine
-# Only ran if todos.db does not exist
-Base.metadata.create_all(bind=engine)
 
 # Create Health Check route
 @app.get("/healthy")
