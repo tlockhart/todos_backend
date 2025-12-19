@@ -14,7 +14,7 @@
 # pip install argon2_cffi : extend bcrypt password limit to greater than 72
 # pip install "python-jose[cryptography]" : install jose
 # pip install python-multipart : install multipart to submit forms to application, for token
-# pip install sqlite (pysqlite3) : install sqllite
+# pip install sqlite3 (pysqlite3) : install sqllite
 # pip install python-dotenv : install .env
 # pip install sqlalchemy: Install SQLAchemy ORM in project:
 # Windows: (Check version of install): python -m poetry --version
