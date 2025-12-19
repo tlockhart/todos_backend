@@ -19,10 +19,11 @@ def test_user_with_todos_fixture(user_with_todos):
     - RelatedFactoryList works
     - Relationship is wired correctly
     """
+    user = user_with_todos(todos_size=3)
 
-    assert user_with_todos.id is not None
-    assert len(user_with_todos.todos) == 3
+    assert user.id is not None
+    assert len(user.todos) == 3
 
-    for todo in user_with_todos.todos:
-        assert todo.owner_id == user_with_todos.id
-        assert todo.owner is user_with_todos
+    for todo in user.todos:
+        assert todo.owner_id == user.id
+        assert todo.owner is user

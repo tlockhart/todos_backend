@@ -2,16 +2,37 @@ import pytest
 from ..factories.auth import UserFactory, TodosFactory
 
 # -------------------------------------------------
-# Factory-backed fixtures
+# UNIT TEST fixtures - no database interaction
 # -------------------------------------------------
 @pytest.fixture
 def user():
-    return UserFactory()
+    """Create a user instance (not persisted to database)."""
+    return UserFactory.build()
+
 
 @pytest.fixture
 def user_with_todos():
-    return UserFactory(todos__size=3)
+    """
+    Fixture factory to create a user with a specified number of todos (not persisted to database).
+    
+    Usage:
+        def test_example(user_with_todos):
+            user = user_with_todos(todos_size=5)
+            assert len(user.todos) == 5
+    """
+    def _create_user_with_todos(todos_size=3):
+        user = UserFactory.build()
+        # Manually create the todos list for unit testing (no DB)
+        user.todos = [
+            TodosFactory.build(owner=user, owner_id=user.id)
+            for _ in range(todos_size)
+        ]
+        return user
+    
+    return _create_user_with_todos
+
 
 @pytest.fixture
 def todo(user):
-    return TodosFactory(owner=user)
+    """Create a single todo for a user (not persisted to database)."""
+    return TodosFactory.build(owner=user, owner_id=user.id)

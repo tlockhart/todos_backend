@@ -1,10 +1,10 @@
 from sqlalchemy import create_engine, delete
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
-from ..models import Todos, Users
-from ..routers.auth import bcrypt_context
-from ..utils.database.connection import Base
-from ..main import app
+from ...models import Todos, Users
+from ...routers.auth import bcrypt_context
+from ...utils.database.connection import Base
+from ...main import app
 from fastapi.testclient import TestClient
 client = TestClient(app)
 

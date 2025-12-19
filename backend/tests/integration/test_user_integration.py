@@ -1,7 +1,7 @@
 from datetime import timedelta
 from jose import jwt
 
-from backend.routers.auth import (
+from ...routers.auth import (
     authenticate_user,
     create_access_token,
     SECRET_KEY,
@@ -11,7 +11,7 @@ from backend.routers.auth import (
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
-def test_authenticate_user(db, user):
+def test_authenticate_user(db, user_db_entry):
     """
     INTEGRATION:
     - DB-backed authentication
@@ -19,27 +19,28 @@ def test_authenticate_user(db, user):
 
     authenticated = authenticate_user(
         db,
-        username=user.username,
-        password=user.hashed_password,
+        username=user_db_entry.username,
+        # password=user_db_entry.hashed_password,
+        password=user_db_entry._plain_password,  # <-- plaintext, not hash
     )
 
     assert authenticated is not None
-    assert authenticated.id == user.id
+    assert authenticated.id == user_db_entry.id
 
 
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
-def test_create_access_token_with_real_user(user):
+def test_create_access_token_with_real_user(user_db_entry):
     """
     INTEGRATION:
     - Token created from real User
     """
 
     token = create_access_token(
-        username=user.username,
-        user_id=user.id,
-        role=user.role,
+        username=user_db_entry.username,
+        user_id=user_db_entry.id,
+        role=user_db_entry.role,
         expires_delta=timedelta(minutes=15),
     )
 
@@ -50,6 +51,6 @@ def test_create_access_token_with_real_user(user):
         options={"verify_signature": False},
     )
 
-    assert decoded["sub"] == user.username
-    assert decoded["id"] == user.id
-    assert decoded["role"] == user.role
+    assert decoded["sub"] == user_db_entry.username
+    assert decoded["id"] == user_db_entry.id
+    assert decoded["role"] == user_db_entry.role

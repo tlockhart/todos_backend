@@ -1,22 +1,21 @@
 import factory
 from factory.alchemy import SQLAlchemyModelFactory
-from backend.models import User, Todos
+from ....models import Users, Todos
 from faker import Faker
-from backend.utils.database.connection import get_db_session
+from passlib.context import CryptContext
 
-# Helper: get a real session from the generator safely
-def get_factory_session():
-    gen = get_db_session()  # returns a generator
-    session = next(gen)
-    return session
-
-factory_session = get_factory_session()
 fake = Faker()
+
+
+# Use the same scheme as routers/auth.py
+password_context = CryptContext(schemes=["argon2"], deprecated="auto")
+
 
 class TodosFactory(SQLAlchemyModelFactory):
     class Meta:
         model = Todos
-        sqlalchemy_session = factory_session
+        # Don't set session here - fixtures will handle session
+        sqlalchemy_session = None
         sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda n: n + 1)
@@ -29,8 +28,9 @@ class TodosFactory(SQLAlchemyModelFactory):
 
 class UserFactory(SQLAlchemyModelFactory):
     class Meta:
-        model = User
-        sqlalchemy_session = factory_session
+        model = Users
+        # Don't set session here - fixtures will handle session
+        sqlalchemy_session = None
         sqlalchemy_session_persistence = "commit"
 
     id = factory.Sequence(lambda n: n + 1)
@@ -38,7 +38,11 @@ class UserFactory(SQLAlchemyModelFactory):
     email = factory.LazyFunction(lambda: f"user{fake.random_int()}@example.com")
     first_name = factory.LazyFunction(fake.first_name)
     last_name = factory.LazyFunction(fake.last_name)
-    hashed_password = factory.LazyFunction(fake.password)
+
+    
+# ✅ Hash a known plaintext here (do NOT define _plain_password as a field)
+    hashed_password = factory.LazyAttribute(lambda o: password_context.hash("Password123!"))
+
     role = "user"
     is_active = True
     phone_number = None
@@ -46,5 +50,5 @@ class UserFactory(SQLAlchemyModelFactory):
     todos = factory.RelatedFactoryList(
         TodosFactory,
         factory_related_name="owner",
-        size=3
+        size=0  # Default to 0, can be overridden with todos__size=N
     )

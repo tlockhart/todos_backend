@@ -104,3 +104,9 @@ This avoids the mismatch because template0 is a barebones template.
 
 # Test Commands:
 ## pytest -v : verbose
+
+
+# Factories:
+## from todos_backend package run commands:
+### pytest -v --tb=short backend/tests/unit/test_user_unit.py
+### pytest -v --tb=short backend/tests/unit/test_todos_unit.py
