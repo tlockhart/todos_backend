@@ -18,7 +18,13 @@ class TodosFactory(SQLAlchemyModelFactory):
         sqlalchemy_session = None
         sqlalchemy_session_persistence = "commit"
 
-    id = factory.Sequence(lambda n: n + 1)
+    """Using factory.Sequence explicitly sets the id 
+    for every instance starting from 1. In a persistent 
+    test database (or across multiple tests), this will 
+    quickly collide with existing rows, causing the UNIQUE 
+    constraint failed: users.id error you’re seeing."""
+    # NEVER SET THE ID
+    # id = factory.Sequence(lambda n: n + 1)
     title = factory.LazyFunction(lambda: fake.sentence(nb_words=4))
     description = factory.LazyFunction(lambda: fake.paragraph(nb_sentences=2))
     priority = factory.LazyFunction(lambda: fake.random_int(min=1, max=5))
@@ -32,8 +38,13 @@ class UserFactory(SQLAlchemyModelFactory):
         # Don't set session here - fixtures will handle session
         sqlalchemy_session = None
         sqlalchemy_session_persistence = "commit"
-
-    id = factory.Sequence(lambda n: n + 1)
+    """Using factory.Sequence explicitly sets the id 
+    for every instance starting from 1. In a persistent 
+    test database (or across multiple tests), this will 
+    quickly collide with existing rows, causing the UNIQUE 
+    constraint failed: users.id error you’re seeing."""
+    # NEVER SET THE ID
+    # id = factory.Sequence(lambda n: n + 1)
     username = factory.LazyFunction(lambda: f"user{fake.random_int()}")
     email = factory.LazyFunction(lambda: f"user{fake.random_int()}@example.com")
     first_name = factory.LazyFunction(fake.first_name)

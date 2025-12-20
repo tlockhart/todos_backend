@@ -1,14 +1,19 @@
 from sqlalchemy import create_engine, delete
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 from ...models import Todos, Users
 from ...routers.auth import bcrypt_context
 from ...utils.database.connection import Base
 from ...main import app
+from fastapi import Depends
 from fastapi.testclient import TestClient
+from ...utils.database.connection import get_db_session
 client = TestClient(app)
 
 import pytest
+
+_test_user_id: int | None = None
 
 # Create a new sqlite database (testdb.db) in the root project directory (fastAPI):
 SQLALCHEMY_DATABASE_URL = "sqlite:///./testdb.db"
@@ -41,11 +46,14 @@ def override_get_db_session():
     finally:
         db.close()
 
-
+def set_test_user(user):
+    global _test_user_id
+    _test_user_id = user.id
+    
 # Mock user
-def override_get_current_user():
+def override_get_current_user(db: Session):
     """
-    Override the current user dependency for testing.
+    Override the current user with token dependency for testing.
     
     Returns a mock authenticated user with admin privileges, bypassing the actual
     authentication process during tests.
@@ -56,7 +64,15 @@ def override_get_current_user():
             - id (int): The mock user ID
             - user_role (str): The mock user role
     """
-    return {"username": "tlockhart6", "id": 1, "user_role": "admin"}
+    if _test_user_id is None:
+        raise RuntimeError("Test user not set")
+    # return db.get(Users, _test_user_id)
+    user = db.get(Users, _test_user_id)
+    return {
+        "username": user.username,
+        "id": user.id,
+        "user_role": user.role
+    }
 
 # Add Todo Fixture
 @pytest.fixture
