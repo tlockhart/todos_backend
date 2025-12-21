@@ -70,79 +70,79 @@ def override_get_current_user():
 # LEGACY FIXTURES (Standard Setup/Teardown Pattern): FOR CODING WITH ROBBY ONLY
 # ======================================================================================
 
-# @pytest.fixture
-# def test_user():
-#     """
-#     PROVISIONER: Single Test User
-#     Creates a user using the TestingSessionLocal and commits it to the database.
+@pytest.fixture
+def test_user():
+    """
+    PROVISIONER: Single Test User
+    Creates a user using the TestingSessionLocal and commits it to the database.
     
-#     Why Commit here instead of Flush?
-#     - These legacy fixtures are designed for tests that don't necessarily 
-#       use the unified session strategy. They ensure data persists long enough 
-#       for a standard TestClient to find it.
+    Why Commit here instead of Flush?
+    - These legacy fixtures are designed for tests that don't necessarily 
+      use the unified session strategy. They ensure data persists long enough 
+      for a standard TestClient to find it.
     
-#     Cleanup: Uses a raw engine connection to delete all Users after the test 
-#     finishes to ensure a clean state for the next run.
-#     """
-#     user = Users(
-#         username="codingwithrobytest",
-#         email="codingwithrobytest@email.com",
-#         first_name="Eric",
-#         last_name="Roby",
-#         hashed_password=bcrypt_context.hash("testpassword"),
-#         role="admin",
-#         phone_number="(111)-111-1111",
-#     )
+    Cleanup: Uses a raw engine connection to delete all Users after the test 
+    finishes to ensure a clean state for the next run.
+    """
+    user = Users(
+        username="codingwithrobytest",
+        email="codingwithrobytest@email.com",
+        first_name="Eric",
+        last_name="Roby",
+        hashed_password=bcrypt_context.hash("testpassword"),
+        role="admin",
+        phone_number="(111)-111-1111",
+    )
     
-#     db = TestingSessionLocal()
-#     db.add(user)
-#     db.commit()
-#     db.refresh(user)
+    db = TestingSessionLocal()
+    db.add(user)
+    db.commit()
+    db.refresh(user)
     
-#     yield user
+    yield user
     
-#     # Cleanup: Hard delete all users from the test table
-#     with engine.connect() as connection:
-#         connection.execute(delete(Users))
-#         connection.commit()
+    # Cleanup: Hard delete all users from the test table
+    with engine.connect() as connection:
+        connection.execute(delete(Users))
+        connection.commit()
 
-# @pytest.fixture
-# def test_todo():
-#     """
-#     PROVISIONER: Single Test Todo
-#     Ensures the Todos table is empty, creates one Todo, and commits it.
+@pytest.fixture
+def test_todo():
+    """
+    PROVISIONER: Single Test Todo
+    Ensures the Todos table is empty, creates one Todo, and commits it.
     
-#     Cleanup: Explicitly deletes all Todos after the test completes.
-#     Note: This fixture is primarily used for tests that don't rely on 
-#     complex relationship factories.
-#     """
-#     todo = Todos(
-#         title="Learn to code!",
-#         description="Need to learn everyday!",
-#         priority=5,
-#         complete=False,
-#         owner_id=1,
-#     )
+    Cleanup: Explicitly deletes all Todos after the test completes.
+    Note: This fixture is primarily used for tests that don't rely on 
+    complex relationship factories.
+    """
+    todo = Todos(
+        title="Learn to code!",
+        description="Need to learn everyday!",
+        priority=5,
+        complete=False,
+        owner_id=1,
+    )
 
-#     db = TestingSessionLocal()
-#     try:
-#         # Pre-test cleanup to ensure no ID collisions
-#         db.execute(delete(Todos))
-#         db.commit()
+    db = TestingSessionLocal()
+    try:
+        # Pre-test cleanup to ensure no ID collisions
+        db.execute(delete(Todos))
+        db.commit()
         
-#         db.add(todo)
-#         db.commit()
-#         # Refresh to populate DB-generated fields (like IDs)
-#         db.refresh(todo)
-#     finally:
-#         db.close()
+        db.add(todo)
+        db.commit()
+        # Refresh to populate DB-generated fields (like IDs)
+        db.refresh(todo)
+    finally:
+        db.close()
     
-#     yield todo
+    yield todo
 
-#     # Final cleanup to prevent data leakage
-#     db = TestingSessionLocal()
-#     try:
-#         db.execute(delete(Todos))
-#         db.commit()
-#     finally:
-#         db.close()
+    # Final cleanup to prevent data leakage
+    db = TestingSessionLocal()
+    try:
+        db.execute(delete(Todos))
+        db.commit()
+    finally:
+        db.close()
