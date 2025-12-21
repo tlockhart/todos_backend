@@ -106,7 +106,9 @@ This avoids the mismatch because template0 is a barebones template.
 ## pytest -v : verbose
 
 
-# Factories:
+# Pytests: Run from backend
 ## from todos_backend package run commands:
-### pytest -v --tb=short backend/tests/unit/test_user_unit.py
-### pytest -v --tb=short backend/tests/unit/test_todos_unit.py
+### pytest -v --tb=short tests/unit/test_user_unit.py
+### pytest -v --tb=short tests/unit/test_todos_unit.py
+### pytest tests/integration/test_user_integration.py -v
+### pytest tests/integration/test_todos_integration.py -v

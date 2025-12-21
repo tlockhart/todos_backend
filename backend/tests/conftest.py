@@ -1,49 +1,47 @@
 import pytest
 from ..main import app
-from ..utils.database.connection import get_db_session, get_current_user
-from .utils.db_connections import override_get_db_session, override_get_current_user, TestingSessionLocal
-from ..utils.database.connection import oauth2_bearer
-from fastapi.security import OAuth2PasswordBearer
+from ..utils.database.connection import get_db_session, get_current_user, oauth2_bearer
+from .utils.db_connections import override_get_db_session, override_get_current_user
 # Unit test fixtures (no DB interaction)
 from .utils.fixtures.user_unit import user, user_with_todos, todo
 
-
-# -------------------------------------------------
-# GLOBAL FastAPI dependency override (autouse)
-# -------------------------------------------------
-@pytest.fixture(autouse=True, scope="session")
-def override_db_dependency():
-    """Automatically override get_db_session for all tests."""
-    """get_db_session override: All tests will use the SQLite 
-    in-memory or test file DB, so your integration tests won’t 
-    touch MySQL."""
-    app.dependency_overrides[get_db_session] = override_get_db_session
-    """get_current_user override: Your override_get_current_user fixture 
-    still returns the test user from the SQLite test DB, so routes that 
-    use the token will now behave as if the token is valid."""
-    app.dependency_overrides[get_current_user] = override_get_current_user
-    """ensures any route depending on OAuth2PasswordBearer receives 
-    "fake-token" instead of trying to hit the real token flow."""
-    app.dependency_overrides[oauth2_bearer] = lambda: "fake-token"
-    yield
-
-    app.dependency_overrides.clear()
-
-# -------------------------------------------------
-# Database session fixture
-# -------------------------------------------------
+# --------------------------------------------------------------------------------------
+# 1. DATABASE SESSION FIXTURE
+# --------------------------------------------------------------------------------------
 @pytest.fixture
 def db():
     """
-    Provides a test database session for integration tests.
-    Uses the same overridden get_db_session that FastAPI uses.
+    CORE DATABASE FIXTURE:
+    Provides a SQLAlchemy session tied to the test database.
+    
+    ISOLATION STRATEGY:
+    - We yield a session from the test engine.
+    - After the test, we call rollback() to ensure no data is actually committed 
+      to the testdb.db file, keeping tests isolated and fast.
     """
     db_gen = override_get_db_session()
     session = next(db_gen)
     try:
         yield session
-        
     finally:
-        # NOTE: TEST ISOLATION: REMOVE EVERYTHING CREATED DUING TEST
-        session.rollback()   # 🔑 THIS IS THE FIX
+        # Ensure the transaction is rolled back so the next test starts fresh
+        session.rollback()
         session.close()
+
+# --------------------------------------------------------------------------------------
+# 2. GLOBAL OVERRIDES (Optional / Minimal)
+# --------------------------------------------------------------------------------------
+@pytest.fixture(autouse=True)
+def base_dependency_overrides():
+    """
+    Apply only the strictly necessary global overrides.
+    We move specific user/db overrides to the client fixtures to avoid conflicts.
+    """
+    # This is safe to keep global as it's a constant mock
+    app.dependency_overrides[oauth2_bearer] = lambda: "fake-token"
+    
+    yield
+    
+    # We do NOT clear here if using client_with_user, as that fixture 
+    # handles its own lifecycle. If we clear here, we might wipe overrides 
+    # that the test is currently using.
