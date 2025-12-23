@@ -34,7 +34,7 @@ def test_read_single_todo(client_with_user, todo_db_entry):
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
-def test_update_todo(client_with_user, todo_db_entry, db):
+def test_update_todo(client_with_user, todo_db_entry, test_db_session):
     payload = {
         "title": "Updated",
         "description": "Updated",
@@ -46,8 +46,8 @@ def test_update_todo(client_with_user, todo_db_entry, db):
     assert response.status_code == 200
 
      # Reload the todo from the database in a fresh session
-    updated_todo = db.get(Todos, todo_db_entry.id)
-    db.refresh(updated_todo)
+    updated_todo = test_db_session.get(Todos, todo_db_entry.id)
+    test_db_session.refresh(updated_todo)
     assert updated_todo.complete is True
     assert updated_todo.title == "Updated"
 
@@ -55,17 +55,17 @@ def test_update_todo(client_with_user, todo_db_entry, db):
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
-def test_delete_todo(client_with_user, todo_db_entry, db):
+def test_delete_todo(client_with_user, todo_db_entry, test_db_session):
     response = client_with_user.delete(f"/todos/todo/{todo_db_entry.id}")
     assert response.status_code == 200
     
-    """Instead of db.refresh(todo_db_entry), query fresh
+    """Instead of test_db_session.refresh(todo_db_entry), query fresh
     Even though you expect the row to be gone, SQLAlchemy 
     still has the object in the session as a pending delete, 
-    so calling db.get() or db.refresh() on it will fail."""
-    # deleted_todo = db.get(Todos, todo_db_entry.id)
+    so calling test_db_session.get() or test_db_session.refresh() on it will fail."""
+    # deleted_todo = test_db_session.get(Todos, todo_db_entry.id)
     
-    # Solution: Query the db with will not pull object in pending state:
-    deleted_todo = db.query(Todos).filter(Todos.id == todo_db_entry.id).first()
+    # Solution: Query the test_db_session with will not pull object in pending state:
+    deleted_todo = test_db_session.query(Todos).filter(Todos.id == todo_db_entry.id).first()
     
     assert deleted_todo is None

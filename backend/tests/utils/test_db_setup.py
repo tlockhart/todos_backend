@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, delete
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import Session
 from ...models import Todos, Users
 from ...routers.auth import bcrypt_context
 from ...utils.database.connection import Base
@@ -35,6 +36,28 @@ Base.metadata.create_all(bind=engine)
 
 
 # ======================================================================================
+# DEPENDENCY OVERRIDE HELPERS
+# ======================================================================================
+
+
+def override_get_current_user():
+    """
+    TEST DEPENDENCY: Authentication
+    Used to replace 'get_current_user' in FastAPI endpoints.
+
+    By default, this returns None (unauthenticated).
+    Advanced integration tests will use 'app.dependency_overrides' to replace
+    this with a lambda returning a specific user dictionary.
+    """
+    # Use the Factory to build the user object, ensuring it matches the model structure.
+    # We explicitly set values to maintain backward compatibility with tests expecting
+    # these specific credentials.
+    user = UserFactory.build(username="codingwithrobytest", id=1, role="admin")
+
+    return {"username": user.username, "id": user.id, "user_role": user.role}
+
+
+# ======================================================================================
 # CORE DATABASE FIXTURE
 # ======================================================================================
 
@@ -60,45 +83,6 @@ def test_db_session():
         # Ensure the transaction is rolled back so the next test starts fresh
         session.rollback()
         session.close()
-
-
-# ======================================================================================
-# DEPENDENCY OVERRIDE HELPERS
-# ======================================================================================
-
-
-def override_get_db_session():
-    """
-    TEST DEPENDENCY: Database Session
-    Used to replace 'get_db_session' in FastAPI endpoints.
-
-    STRATEGY: New Session per Request.
-    - Creates a fresh SQLAlchemy session for each request.
-    - Used as the default global override.
-    - Ensures API has DB access when not using the shared 'client_with_user' fixture.
-    """
-    db = TestingSessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
-def override_get_current_user():
-    """
-    TEST DEPENDENCY: Authentication
-    Used to replace 'get_current_user' in FastAPI endpoints.
-
-    By default, this returns None (unauthenticated).
-    Advanced integration tests will use 'app.dependency_overrides' to replace
-    this with a lambda returning a specific user dictionary.
-    """
-    # Use the Factory to build the user object, ensuring it matches the model structure.
-    # We explicitly set values to maintain backward compatibility with tests expecting
-    # these specific credentials.
-    user = UserFactory.build(username="codingwithrobytest", id=1, role="admin")
-
-    return {"username": user.username, "id": user.id, "user_role": user.role}
 
 
 # ======================================================================================

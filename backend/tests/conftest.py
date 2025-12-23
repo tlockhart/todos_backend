@@ -2,7 +2,6 @@ import pytest
 from ..main import app
 from ..utils.database.connection import get_db_session, get_current_user, oauth2_bearer
 from .utils.test_db_setup import (
-    override_get_db_session,
     override_get_current_user,
     TestingSessionLocal,
     test_db_session,
@@ -22,7 +21,7 @@ from .utils.fixtures.user_unit import user, user_with_todos, todo
 # 2. GLOBAL OVERRIDES (Optional / Minimal)
 # --------------------------------------------------------------------------------------
 @pytest.fixture(autouse=True)
-def base_dependency_overrides():
+def base_dependency_overrides(test_db_session):
     """
     GLOBAL DEPENDENCY OVERRIDE: Authentication
     This is an `autouse` fixture, meaning it runs automatically before every test.
@@ -41,7 +40,7 @@ def base_dependency_overrides():
     """
     # This is safe to keep global as it's a constant mock
     app.dependency_overrides[oauth2_bearer] = lambda: "fake-token"
-    app.dependency_overrides[get_db_session] = override_get_db_session
+    app.dependency_overrides[get_db_session] = lambda: test_db_session
 
     yield
 
