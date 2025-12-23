@@ -5,7 +5,7 @@ from ......utils.database.connection import get_current_user, get_db_session
 
 
 @pytest.fixture
-def client_with_user(db, user_with_todos_db_entry):
+def client_with_user(test_db_session, user_with_todos_db_entry):
     """
     AUTHENTICATED TEST CLIENT:
     This is the core fixture for integration testing. It performs two critical
@@ -45,7 +45,7 @@ def client_with_user(db, user_with_todos_db_entry):
           (Read-Your-Own-Writes).
         """
         try:
-            yield db
+            yield test_db_session
         finally:
             # Lifecycle is managed by the top-level 'db' fixture in conftest.py
             pass

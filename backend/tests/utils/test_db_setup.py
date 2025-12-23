@@ -35,6 +35,34 @@ Base.metadata.create_all(bind=engine)
 
 
 # ======================================================================================
+# CORE DATABASE FIXTURE
+# ======================================================================================
+
+
+@pytest.fixture
+def test_db_session():
+    """
+    CORE DATABASE FIXTURE:
+    Provides a SQLAlchemy session tied to the test database.
+
+    ISOLATION STRATEGY:
+    - We yield a session from the test engine.
+    - After the test, we call rollback() to ensure no data is actually committed
+      to the testdb.db file, keeping tests isolated and fast.
+    """
+    # We use TestingSessionLocal() directly here because app.dependency_overrides
+    # only affects FastAPI's dependency injection system during a request.
+    # Calling get_db_session() directly would still use the production/dev DB.
+    session = TestingSessionLocal()
+    try:
+        yield session
+    finally:
+        # Ensure the transaction is rolled back so the next test starts fresh
+        session.rollback()
+        session.close()
+
+
+# ======================================================================================
 # DEPENDENCY OVERRIDE HELPERS
 # ======================================================================================
 

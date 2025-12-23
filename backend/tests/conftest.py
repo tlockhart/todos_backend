@@ -5,6 +5,7 @@ from .utils.test_db_setup import (
     override_get_db_session,
     override_get_current_user,
     TestingSessionLocal,
+    test_db_session,
 )
 
 # Unit test fixtures (no DB interaction)
@@ -14,24 +15,7 @@ from .utils.fixtures.user_unit import user, user_with_todos, todo
 # --------------------------------------------------------------------------------------
 # 1. DATABASE SESSION FIXTURE
 # --------------------------------------------------------------------------------------
-@pytest.fixture
-def db():
-    """
-    CORE DATABASE FIXTURE:
-    Provides a SQLAlchemy session tied to the test database.
-
-    ISOLATION STRATEGY:
-    - We yield a session from the test engine.
-    - After the test, we call rollback() to ensure no data is actually committed
-      to the testdb.db file, keeping tests isolated and fast.
-    """
-    session = TestingSessionLocal()
-    try:
-        yield session
-    finally:
-        # Ensure the transaction is rolled back so the next test starts fresh
-        session.rollback()
-        session.close()
+# This fixture has been moved to tests/utils/test_db_setup.py for better organization.
 
 
 # --------------------------------------------------------------------------------------
