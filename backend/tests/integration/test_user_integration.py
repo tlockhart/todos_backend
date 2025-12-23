@@ -11,14 +11,14 @@ from ...routers.auth import (
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
-def test_authenticate_user(db, user_db_entry):
+def test_authenticate_user(test_db_session, user_db_entry):
     """
     INTEGRATION:
     - DB-backed authentication
     """
 
     authenticated = authenticate_user(
-        db,
+        test_db_session,
         username=user_db_entry.username,
         # password=user_db_entry.hashed_password,
         password=user_db_entry._plain_password,  # <-- plaintext, not hash

@@ -14,20 +14,22 @@ from fastapi import HTTPException
 
 
 # Unit test: To test if username and password matches test_user
-def test_authenticate_user(test_user):
-    db = TestingSessionLocal()
-
-    user = authenticate_user(db, username="codingwithrobytest", password="testpassword")
+def test_authenticate_user(test_user, test_db_session):
+    user = authenticate_user(
+        test_db_session, username="codingwithrobytest", password="testpassword"
+    )
 
     assert user is not None
     assert user.username == "codingwithrobytest"
 
     non_existent_user = authenticate_user(
-        db, username="WrongUserName", password="tespassword"
+        test_db_session, username="WrongUserName", password="tespassword"
     )
     assert non_existent_user is False
 
-    wrong_password_user = authenticate_user(db, test_user.username, "wrongpassword")
+    wrong_password_user = authenticate_user(
+        test_db_session, test_user.username, "wrongpassword"
+    )
     assert wrong_password_user is False
 
 

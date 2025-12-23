@@ -39,14 +39,13 @@ def test_admin_read_all_authenticated(test_todo):
     del app.dependency_overrides[get_current_user]
 
 
-def test_admin_delete_todo(test_todo):
+def test_admin_delete_todo(test_todo, test_db_session):
     app.dependency_overrides[get_current_user] = override_get_current_user
 
     response = client.delete("/admin/todo/1")
     assert response.status_code == 200
 
-    db = TestingSessionLocal()
-    model = db.query(Todos).filter(Todos.id == 1).first()
+    model = test_db_session.query(Todos).filter(Todos.id == 1).first()
     assert model is None
     del app.dependency_overrides[get_current_user]
 
