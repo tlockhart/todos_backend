@@ -1,3 +1,10 @@
 import pytest
+
 # Import the generic DB entry fixture and specific fixtures for integration tests
-from ..utils.fixtures.db_fixtures import object_db_entry, user_db_entry, user_with_todos_db_entry, todo_db_entry, client_with_user
+from ..utils.fixtures.integration.db_entry.generic import object_db_entry
+from ..utils.fixtures.integration.users import (
+    user_db_entry,
+    user_with_todos_db_entry,
+)
+from ..utils.fixtures.integration.db_entry.todos import todo_db_entry
+from ..utils.fixtures.integration.db_entry.client import client_with_user

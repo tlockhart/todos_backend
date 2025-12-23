@@ -1,23 +1,25 @@
 from starlette import status
-from todos_backend.utils.database.connection import get_db_session, get_current_user
-from todos_backend.test.utils import (
+from ...utils.database.connection import get_current_user
+from ..utils.db_connections import (
     TestingSessionLocal,
     override_get_current_user,
-    override_get_db_session,
+    test_todo,
 )
-from todos_backend.models import Todos
+from ...models import Todos
 from fastapi.testclient import TestClient
-from todos_backend.main import app
+from ...main import app
+import pytest
 
 client = TestClient(app)
 
-# Change dependencies on the client
-app.dependency_overrides[get_db_session] = override_get_db_session
-app.dependency_overrides[get_current_user] = override_get_current_user
 
-# Drop everything
-# with engine.begin() as conn:
-#     conn.run_sync(Base.metadata.drop_all)
+@pytest.fixture(scope="module", autouse=True)
+def setup_overrides():
+    # get_db_session is already overridden globally in conftest.py
+    # We only need to override the user for these authenticated tests
+    app.dependency_overrides[get_current_user] = override_get_current_user
+    yield
+    del app.dependency_overrides[get_current_user]
 
 
 # Pass the test_todo into the test
@@ -30,11 +32,11 @@ def test_read_all_authenticated(test_todo):
     assert isinstance(data, list)
     assert len(data) == 1
     item = data[0]
-    assert item["title"] == "Learn to code!"
-    assert item["description"] == "Need to learn everyday!"
-    assert item["priority"] == 5
-    assert item["complete"] is False
-    assert item["owner_id"] == 1
+    assert item["title"] == test_todo.title
+    assert item["description"] == test_todo.description
+    assert item["priority"] == test_todo.priority
+    assert item["complete"] == test_todo.complete
+    assert item["owner_id"] == test_todo.owner_id
 
     # --- also assert the returned JSON equals the fixture's serialized model ---
     from sqlalchemy import inspect
@@ -55,11 +57,11 @@ def test_read_one_authenticated(test_todo):
     data = response.json()
     # assert isinstance(data, dict)
 
-    assert data["title"] == "Learn to code!"
-    assert data["description"] == "Need to learn everyday!"
-    assert data["priority"] == 5
-    assert data["complete"] is False
-    assert data["owner_id"] == 1
+    assert data["title"] == test_todo.title
+    assert data["description"] == test_todo.description
+    assert data["priority"] == test_todo.priority
+    assert data["complete"] == test_todo.complete
+    assert data["owner_id"] == test_todo.owner_id
 
 
 def test_read_one_authenticated_not_found():
@@ -112,7 +114,6 @@ def test_update_todo_not_found(test_todo):
         "priority": 5,
         "complete": False,
     }
-    import pytest
 
     response = client.put("/todos/todo/999", json=request_data)
     assert response.status_code == 404
