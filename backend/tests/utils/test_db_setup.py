@@ -1,14 +1,9 @@
 from sqlalchemy import create_engine, delete
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm import Session
 from ...models import Todos, Users
 from ...routers.auth import bcrypt_context
 from ...utils.database.connection import Base
-from ...main import app
-from fastapi import Depends
-from fastapi.testclient import TestClient
-from ...utils.database.connection import get_db_session
 
 from .factories.auth import UserFactory, TodosFactory
 import pytest
