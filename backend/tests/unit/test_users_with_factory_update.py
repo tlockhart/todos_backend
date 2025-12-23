@@ -1,6 +1,6 @@
 from ..utils import *
 from ...utils.database.connection import get_current_user
-from ..utils.db_connections import override_get_current_user, test_user
+from ..utils.test_db_setup import override_get_current_user, test_user
 from ...main import app
 from fastapi.testclient import TestClient
 from fastapi import status

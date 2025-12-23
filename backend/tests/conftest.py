@@ -1,7 +1,7 @@
 import pytest
 from ..main import app
 from ..utils.database.connection import get_db_session, get_current_user, oauth2_bearer
-from .utils.db_connections import (
+from .utils.test_db_setup import (
     override_get_db_session,
     override_get_current_user,
     TestingSessionLocal,

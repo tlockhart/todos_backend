@@ -111,7 +111,8 @@ This avoids the mismatch because template0 is a barebones template.
 ### pytest -v --tb=short tests/unit/test_user_unit.py
 ### pytest -v --tb=short tests/unit/test_todos_unit.py
 ### pytest -v --tb=short tests/integration/test_user_integration.py
-### pytest -v --tb=short tests/integration/test_todos_integration.py
+### START MySQL
+#### pytest -v --tb=short tests/integration/test_todos_integration.py
 
 ### pytest -v --tb=short tests/integration/test_todos_with_factory_update.py
 ### pytest -v --tb=short tests/unit/test_users_with_factory_update.py

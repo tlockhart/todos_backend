@@ -1,6 +1,6 @@
 from starlette import status
 from ...utils.database.connection import get_current_user
-from ..utils.db_connections import (
+from ..utils.test_db_setup import (
     TestingSessionLocal,
     override_get_current_user,
     test_todo,

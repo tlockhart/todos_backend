@@ -31,6 +31,8 @@ engine = create_engine(
 )
 
 # Factory for creating database sessions specifically for the test environment.
+# 'bind=engine' hardwires this factory to the test database defined above.
+# Any session created by this class will automatically connect to 'testdb.db'.
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Ensure the database schema is fully created before any tests run.
@@ -157,7 +159,7 @@ def test_todo():
                 id=1,
                 username="codingwithrobytest",
                 email="codingwithrobytest@email.com",
-                role="admin"
+                role="admin",
             )
             db.add(user)
             db.commit()
