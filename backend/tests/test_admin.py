@@ -3,17 +3,9 @@ from fastapi import status
 from fastapi.testclient import TestClient
 import pytest
 from ..main import app
-
-
-from ..utils.database.connection import get_db_session, get_current_user
-from .utils import (
-    override_get_db_session,
-    override_get_current_user,
-    TestingSessionLocal,
-)
+from ..models import Todos
 from ..utils.database.connection import get_current_user
-from .utils import override_get_current_user, TestingSessionLocal
-
+from .utils.test_db_setup import override_get_current_user
 from .utils.factories.auth import UserFactory
 
 client = TestClient(app)
@@ -55,7 +47,6 @@ def test_admin_delete_todo_not_found(test_todo):
 
     response = client.delete("/admin/todo/999")
     assert response.status_code == 404
-    assert response.json() == {"detail": "Todo not found."}
     assert response.json() == {"detail": "Todo not found."}
     del app.dependency_overrides[get_current_user]
 
