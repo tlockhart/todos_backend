@@ -1,4 +1,3 @@
-from .utils import *
 from ..routers.auth import (
     authenticate_user,
     create_access_token,
@@ -10,6 +9,7 @@ from ..routers.auth import (
 from jose import jwt
 from datetime import timedelta
 import pytest
+from .utils.test_db_setup import test_user, test_db_session
 from fastapi import HTTPException
 
 

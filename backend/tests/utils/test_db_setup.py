@@ -6,9 +6,9 @@ from ...models import Todos, Users
 from ...routers.auth import bcrypt_context
 from ...utils.database.connection import Base
 
+import pytest
 from .factories.auth import UserFactory
 from .factories.todos import TodosFactory
-import pytest
 
 # ======================================================================================
 # DATABASE ENGINE CONFIGURATION

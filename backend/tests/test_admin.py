@@ -1,11 +1,10 @@
-from .utils import *
 from fastapi import status
 from fastapi.testclient import TestClient
 import pytest
 from ..main import app
 from ..models import Todos
 from ..utils.database.connection import get_current_user
-from .utils.test_db_setup import override_get_current_user
+from .utils.test_db_setup import override_get_current_user, test_todo, test_db_session
 from .utils.factories.auth import UserFactory
 
 client = TestClient(app)
