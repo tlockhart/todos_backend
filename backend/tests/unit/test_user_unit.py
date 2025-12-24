@@ -1,4 +1,9 @@
-# UNIT TESTS — User fixture only
+from ...models import Users
+# ======================================================================================
+# INFRASTRUCTURE TESTS (Verifying Factories & Fixtures)
+# ======================================================================================
+# These tests ensure that our test data generation tools are working correctly.
+
 
 def test_user_fixture_creates_user(user):
     """
@@ -32,3 +37,26 @@ def test_user_with_todos_fixture(user_with_todos):
     for todo in user.todos:
         # assert todo.owner_id == user.id
         assert todo.owner is user
+
+
+# ======================================================================================
+# MODEL TESTS (Verifying Business Logic)
+# ======================================================================================
+def test_user_model_instantiation():
+    """
+    UNIT:
+    - Direct Users model instantiation (no Factory).
+    - Verifies the model definition itself works as expected.
+    """
+    user = Users(
+        username="testuser",
+        email="test@example.com",
+        hashed_password="hashed_secret",
+        role="admin",
+        is_active=True,
+    )
+
+    assert user.username == "testuser"
+    assert user.email == "test@example.com"
+    assert user.role == "admin"
+    assert user.is_active is True
