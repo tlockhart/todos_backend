@@ -37,12 +37,11 @@ class UserFactory(SQLAlchemyModelFactory):
     first_name = factory.LazyFunction(fake.first_name)
     last_name = factory.LazyFunction(fake.last_name)
 
-    # We store a hash of "Password123!" so the DB row is valid.
-    # Tests will log in using the plaintext "Password123!", which the API
-    # will hash and compare against this stored value.
-    # ✅ Hash a known plaintext here (do NOT define _plain_password as a field)
     # DJANGO SUBSTITUTION: Remove hashed_password field. Use PostGenerationMethodCall instead:
     # password = factory.PostGenerationMethodCall('set_password', 'Password123!')
+    
+    # Tests will log in using the plaintext "Password123!", which the API
+    # will hash and compare against this stored value.
     hashed_password = factory.LazyAttribute(
         lambda o: password_context.hash("Password123!")
     )
