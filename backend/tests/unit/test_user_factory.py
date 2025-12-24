@@ -1,4 +1,3 @@
-from ...models import Users
 # ======================================================================================
 # INFRASTRUCTURE TESTS (Verifying Factories & Fixtures)
 # ======================================================================================
@@ -7,8 +6,9 @@ from ...models import Users
 
 def test_user_fixture_creates_user(user):
     """
-    UNIT:
-    - UserFactory creates a valid User
+    INFRASTRUCTURE TEST:
+    - Verifies that the 'user' fixture and UserFactory are configured correctly.
+    - This is NOT testing application logic, but rather the test suite's tools.
     """
     # Not a db object
     # assert user.id is not None
@@ -37,32 +37,3 @@ def test_user_with_todos_fixture(user_with_todos):
     for todo in user.todos:
         # assert todo.owner_id == user.id
         assert todo.owner is user
-
-
-# ======================================================================================
-# MODEL TESTS (Verifying Business Logic)
-# ======================================================================================
-def test_user_model_instantiation():
-    """
-    UNIT:
-    - Direct Users model instantiation (no Factory).
-    - Verifies the model definition itself works as expected.
-    """
-    # DJANGO SUBSTITUTION:
-    # from django.contrib.auth import get_user_model
-    # User = get_user_model()
-    # user = User(username="testuser", email="test@example.com", ...)
-    # Note: Django models don't typically accept 'hashed_password' in __init__.
-    # You would instantiate with no password or a plain one, then call user.set_password().
-    user = Users(
-        username="testuser",
-        email="test@example.com",
-        hashed_password="hashed_secret",
-        role="admin",
-        is_active=True,
-    )
-
-    assert user.username == "testuser"
-    assert user.email == "test@example.com"
-    assert user.role == "admin"
-    assert user.is_active is True
