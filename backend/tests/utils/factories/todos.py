@@ -1,4 +1,5 @@
 import factory
+# DJANGO SUBSTITUTION: from factory.django import DjangoModelFactory
 from factory.alchemy import SQLAlchemyModelFactory
 from ....models import Todos
 from faker import Faker
@@ -7,9 +8,11 @@ from .auth import UserFactory
 fake = Faker()
 
 
+# DJANGO SUBSTITUTION: class TodosFactory(DjangoModelFactory):
 class TodosFactory(SQLAlchemyModelFactory):
     class Meta:
         model = Todos
+        # DJANGO SUBSTITUTION: Remove sqlalchemy_session lines. Django uses the default DB connection automatically.
         # Don't set session here - fixtures will handle session
         sqlalchemy_session = None
         sqlalchemy_session_persistence = "commit"
@@ -29,6 +32,7 @@ class TodosFactory(SQLAlchemyModelFactory):
 
 
 # Circular dependency resolution: Define todos after TodosFactory is created
+# DJANGO SUBSTITUTION: This pattern works in Django too, but ensure 'owner' matches the field name in your Django model.
 UserFactory.todos = factory.RelatedFactoryList(
     TodosFactory,
     factory_related_name="owner",
