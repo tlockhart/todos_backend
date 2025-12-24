@@ -1,4 +1,3 @@
-from ..utils import *
 from ...utils.database.connection import get_current_user
 from ..utils.test_db_setup import override_get_current_user, test_user
 from ...main import app
@@ -29,7 +28,8 @@ def test_return_user(test_user):
     assert response.json()["last_name"] == test_user.last_name
 
 
-def test_change_password_success(test_user):
+@pytest.mark.usefixtures("test_user")
+def test_change_password_success():
     response = client.put(
         "/user/password",
         json={"password": "testpassword", "new_password": "new_password"},
@@ -37,7 +37,8 @@ def test_change_password_success(test_user):
     assert response.status_code == status.HTTP_204_NO_CONTENT
 
 
-def test_change_password_invalid_current_password(test_user):
+@pytest.mark.usefixtures("test_user")
+def test_change_password_invalid_current_password():
     response = client.put(
         "/user/password",
         json={"password": "wrong_password", "new_password": "newpassword"},
@@ -46,6 +47,7 @@ def test_change_password_invalid_current_password(test_user):
     assert response.json() == {"detail": "Error on password change"}
 
 
-def test_change_phone_number_success(test_user):
+@pytest.mark.usefixtures("test_user")
+def test_change_phone_number_success():
     response = client.put("/user/phonenumber/2222222222")
     assert response.status_code == status.HTTP_204_NO_CONTENT

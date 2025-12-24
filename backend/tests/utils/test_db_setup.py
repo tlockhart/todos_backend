@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, delete
+from sqlalchemy import create_engine
 from sqlalchemy.pool import StaticPool
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import Session
@@ -90,23 +90,23 @@ def test_db_session():
 # LEGACY FIXTURES (Standard Setup/Teardown Pattern): FOR CODING WITH ROBBY ONLY
 # ======================================================================================
 
-
+# Used
 @pytest.fixture
-def test_user():
+def test_user(test_db_session):
     """
     PROVISIONER: Single Test User
-    Creates a user using the TestingSessionLocal and commits it to the database.
-
-    Why Commit here instead of Flush?
-    - These legacy fixtures are designed for tests that don't necessarily
-      use the unified session strategy. They ensure data persists long enough
-      for a standard TestClient to find it.
-
-    Cleanup: Uses a raw engine connection to delete all Users after the test
-    finishes to ensure a clean state for the next run.
+    Creates a user using the unified test_db_session.
+    Uses flush() to generate IDs but relies on the session's rollback for cleanup.
     """
-    # Use UserFactory to create the object, but override fields to match
-    # the specific credentials expected by existing tests (e.g. test_users.py)
+    # Check if user already exists (e.g. from a previous test that committed)
+    # and delete it to ensure we start with a fresh user state for this fixture.
+    existing_user = test_db_session.get(Users, 1)
+    if existing_user:
+        test_db_session.query(Todos).filter(Todos.owner_id == 1).delete()
+        test_db_session.delete(existing_user)
+        test_db_session.flush()
+
+    # Use UserFactory to create the object with specific credentials
     user = UserFactory.build(
         id=1,
         username="codingwithrobytest",
@@ -118,76 +118,33 @@ def test_user():
         phone_number="(111)-111-1111",
     )
 
-    db = TestingSessionLocal()
-    # Pre-cleanup: Ensure no conflicting users exist from previous tests (e.g. test_todo)
-    # This prevents UNIQUE constraint failed: users.username
-    db.execute(delete(Todos))
-    db.execute(delete(Users))
-    db.commit()
-
-    db.add(user)
-    db.commit()
-    db.refresh(user)
-
-    yield user
-
-    # Cleanup: Hard delete all users from the test table
-    with engine.connect() as connection:
-        connection.execute(delete(Todos))
-        connection.execute(delete(Users))
-        connection.commit()
+    test_db_session.add(user)
+    test_db_session.flush()
+    test_db_session.refresh(user)
+    return user
 
 
 @pytest.fixture
-def test_todo():
+def test_todo(test_db_session):
     """
     PROVISIONER: Single Test Todo
-    Ensures the Todos table is empty, creates one Todo, and commits it.
-
-    Cleanup: Explicitly deletes all Todos after the test completes.
-    Note: This fixture is primarily used for tests that don't rely on
-    complex relationship factories.
+    Creates a Todo (and its owner) using the unified test_db_session.
     """
-    db = TestingSessionLocal()
-    try:
-        # Pre-test cleanup to ensure no ID collisions
-        db.execute(delete(Todos))
-        db.commit()
+    # Ensure User 1 exists for the FK constraint
+    user = test_db_session.get(Users, 1)
+    if not user:
+        user = UserFactory.build(
+            id=1,
+            username="codingwithrobytest",
+            email="codingwithrobytest@email.com",
+            role="admin",
+        )
+        test_db_session.add(user)
+        test_db_session.flush()
 
-        # Ensure User 1 exists for the FK constraint and auth override
-        user = db.get(Users, 1)
-        if not user:
-            user = UserFactory.build(id=1, username="codingwithrobytest", role="admin")
-            # Clean up any existing users to prevent Unique violations (e.g. email)
-            # This handles cases where a user exists with a conflicting email but different ID
-            db.execute(delete(Users))
-            db.commit()
-
-            user = UserFactory.build(
-                id=1,
-                username="codingwithrobytest",
-                email="codingwithrobytest@email.com",
-                role="admin",
-            )
-            db.add(user)
-            db.commit()
-
-        # Passing owner=user explicitly sets owner_id to user.id (1) and prevents
-        # the SubFactory from creating a new random user.
-        todo = TodosFactory.build(owner=user)
-        db.add(todo)
-        db.commit()
-        # Refresh to populate DB-generated fields (like IDs)
-        db.refresh(todo)
-    finally:
-        db.close()
-
-    yield todo
-
-    # Final cleanup to prevent data leakage
-    db = TestingSessionLocal()
-    try:
-        db.execute(delete(Todos))
-        db.commit()
-    finally:
-        db.close()
+    # Passing owner=user explicitly sets owner_id to user.id (1)
+    todo = TodosFactory.build(owner=user)
+    test_db_session.add(todo)
+    test_db_session.flush()
+    test_db_session.refresh(todo)
+    return todo
