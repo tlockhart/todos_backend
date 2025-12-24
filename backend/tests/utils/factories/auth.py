@@ -29,11 +29,17 @@ class UserFactory(SQLAlchemyModelFactory):
     constraint failed: users.id error you’re seeing."""
     # NEVER SET THE ID
     # id = factory.Sequence(lambda n: n + 1)
+    # LazyFunction ensures these values are generated fresh for every instance.
+    # Without it, the random value would be generated once at import time,
+    # causing unique constraint errors on subsequent creates.
     username = factory.LazyFunction(lambda: f"user{fake.random_int()}")
     email = factory.LazyFunction(lambda: f"user{fake.random_int()}@example.com")
     first_name = factory.LazyFunction(fake.first_name)
     last_name = factory.LazyFunction(fake.last_name)
 
+    # We store a hash of "Password123!" so the DB row is valid.
+    # Tests will log in using the plaintext "Password123!", which the API
+    # will hash and compare against this stored value.
     # ✅ Hash a known plaintext here (do NOT define _plain_password as a field)
     # DJANGO SUBSTITUTION: Remove hashed_password field. Use PostGenerationMethodCall instead:
     # password = factory.PostGenerationMethodCall('set_password', 'Password123!')
