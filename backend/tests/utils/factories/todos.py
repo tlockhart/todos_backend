@@ -1,4 +1,5 @@
 import factory
+
 # DJANGO SUBSTITUTION: from factory.django import DjangoModelFactory
 from factory.alchemy import SQLAlchemyModelFactory
 from ....models import Todos
@@ -15,7 +16,6 @@ class TodosFactory(SQLAlchemyModelFactory):
         # DJANGO SUBSTITUTION: Remove sqlalchemy_session lines. Django uses the default DB connection automatically.
         # Don't set session here - fixtures will handle session
         sqlalchemy_session = None
-        sqlalchemy_session_persistence = "commit"
 
     """Using factory.Sequence explicitly sets the id 
     for every instance starting from 1. In a persistent 
