@@ -1,7 +1,7 @@
 import pytest
 
 # Import the generic DB entry fixture and specific fixtures for integration tests
-from ..utils.fixtures.integration.users import (
+from ..utils.fixtures.integration.db_entry.users import (
     user_db_entry,
     user_with_todos_db_entry,
 )

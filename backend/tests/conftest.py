@@ -9,8 +9,8 @@ from .utils.test_db_setup import (
 
 # Unit test fixtures (no DB interaction)
 from .utils.fixtures.user_unit import user, user_with_todos, todo
-from .utils.fixtures.integration.users import user_db_entry
-from .utils.fixtures.integration.generic import object_db_entry
+from .utils.fixtures.integration.db_entry.users import user_db_entry
+from .utils.fixtures.integration.db_entry.generic import object_db_entry
 from .utils.fixtures.integration.db_entry.todos import todo_db_entry
 
 

@@ -5,6 +5,9 @@ import pytest
 # ======================================================================================
 
 
+# DJANGO SUBSTITUTION: This fixture is generally NOT needed in Django.
+# factory_boy's DjangoModelFactory handles persistence automatically via .create().
+# You would simply call UserFactory.create() instead of object_db_entry(UserFactory).
 @pytest.fixture
 def object_db_entry(test_db_session):
     """
