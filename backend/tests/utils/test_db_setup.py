@@ -6,7 +6,8 @@ from ...models import Todos, Users
 from ...routers.auth import bcrypt_context
 from ...utils.database.connection import Base
 
-from .factories.auth import UserFactory, TodosFactory
+from .factories.auth import UserFactory
+from .factories.todos import TodosFactory
 import pytest
 
 # ======================================================================================

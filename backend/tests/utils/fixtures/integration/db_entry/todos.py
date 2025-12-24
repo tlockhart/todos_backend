@@ -1,5 +1,5 @@
 import pytest
-from ....factories.auth import TodosFactory
+from ....factories.todos import TodosFactory
 
 
 @pytest.fixture
