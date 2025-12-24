@@ -28,6 +28,11 @@ def client_with_user(test_db_session, user_with_todos_db_entry):
          does not leak into the next, which is required for reliable modular test runs.
     """
 
+    # DJANGO SUBSTITUTION:
+    # Django's test client has built-in support for forcing login.
+    # client.force_login(user_with_todos_db_entry)
+    # return client
+
     # 1. Inject the user into the security dependency layer
     app.dependency_overrides[get_current_user] = lambda: {
         "username": user_with_todos_db_entry.username,

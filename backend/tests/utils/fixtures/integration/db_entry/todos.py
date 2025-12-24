@@ -11,6 +11,8 @@ def todo_db_entry(object_db_entry):
     - Returns a function so you can override fields (title, owner, etc.).
     """
 
+    # DJANGO SUBSTITUTION:
+    # return lambda **kwargs: TodosFactory.create(**kwargs)
     def _create_todo(**kwargs):
         return object_db_entry(TodosFactory, **kwargs)
 

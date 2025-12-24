@@ -41,6 +41,9 @@ def base_dependency_overrides(test_db_session):
     of generating valid tokens. This is crucial for tests involving database
     operations on protected routes, as it simplifies the test setup significantly.
     """
+    # DJANGO SUBSTITUTION: Remove this fixture.
+    # Django tests use client.force_login(user) to bypass auth for specific tests.
+    # Global overrides are generally not used in the same way.
     # This is safe to keep global as it's a constant mock
     app.dependency_overrides[oauth2_bearer] = lambda: "fake-token"
     app.dependency_overrides[get_db_session] = lambda: test_db_session

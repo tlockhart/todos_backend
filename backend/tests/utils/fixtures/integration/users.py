@@ -13,6 +13,8 @@ def user_db_entry(object_db_entry):
       hashes, this provides the test with the raw password needed for login attempts.
     """
 
+    # DJANGO SUBSTITUTION:
+    # return lambda **kwargs: UserFactory.create(_plain_password="Password123!", **kwargs)
     def _create_user(**kwargs):
         new_user = object_db_entry(UserFactory, **kwargs)
         new_user._plain_password = "Password123!"
@@ -29,6 +31,8 @@ def user_with_todos_db_entry(object_db_entry):
     - Primary Use: Provides the default data context for authenticated API tests.
     - Linking: Explicitly links Todos to the User's ID to ensure Foreign Key integrity.
     """
+    # DJANGO SUBSTITUTION:
+    # user = UserFactory.create()
     user = object_db_entry(UserFactory)
 
     # Create related resources linked to the user we just created

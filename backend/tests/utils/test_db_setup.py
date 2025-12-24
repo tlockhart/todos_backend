@@ -14,6 +14,9 @@ from .factories.todos import TodosFactory
 # DATABASE ENGINE CONFIGURATION
 # ======================================================================================
 
+# DJANGO SUBSTITUTION: Remove this entire section.
+# pytest-django handles database creation, connection, and teardown automatically
+# based on your settings.py configuration.
 # Define a separate SQLite database for integration tests to avoid corrupting
 # development or production data.
 SQLALCHEMY_DATABASE_URL = "sqlite:///./testdb.db"
@@ -63,6 +66,8 @@ def override_get_current_user():
 # ======================================================================================
 
 
+# DJANGO SUBSTITUTION: Remove this fixture.
+# pytest-django provides a 'db' fixture that handles transactions automatically.
 @pytest.fixture
 def test_db_session():
     """
@@ -94,6 +99,8 @@ def test_db_session():
 # Used
 @pytest.fixture
 def test_user(test_db_session, user_db_entry):
+    # DJANGO SUBSTITUTION:
+    # return UserFactory.create(id=1, username="codingwithrobytest", ...)
     """
     PROVISIONER: Single Test User
     Creates a user using the unified test_db_session.
