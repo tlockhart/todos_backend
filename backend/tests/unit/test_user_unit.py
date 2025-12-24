@@ -10,6 +10,9 @@ def test_user_fixture_creates_user(user):
     assert user.username
     assert user.email
     assert user.is_active is True
+    # DJANGO SUBSTITUTION:
+    # Django reverse relationships are Managers, not lists. Accessing 'user.todos' on an
+    # unsaved instance usually raises a ValueError.
     assert user.todos == []
 
 
@@ -22,6 +25,8 @@ def test_user_with_todos_fixture(user_with_todos):
     user = user_with_todos(todos_size=3)
 
     # assert user.id is not None
+    # DJANGO SUBSTITUTION:
+    # If using standard Django ORM: assert user.todos.count() == 3
     assert len(user.todos) == 3
 
     for todo in user.todos:
