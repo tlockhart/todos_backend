@@ -90,9 +90,10 @@ def test_db_session():
 # LEGACY FIXTURES (Standard Setup/Teardown Pattern): FOR CODING WITH ROBBY ONLY
 # ======================================================================================
 
+
 # Used
 @pytest.fixture
-def test_user(test_db_session):
+def test_user(test_db_session, user_db_entry):
     """
     PROVISIONER: Single Test User
     Creates a user using the unified test_db_session.
@@ -107,7 +108,7 @@ def test_user(test_db_session):
         test_db_session.flush()
 
     # Use UserFactory to create the object with specific credentials
-    user = UserFactory.build(
+    return user_db_entry(
         id=1,
         username="codingwithrobytest",
         email="codingwithrobytest@email.com",
@@ -118,14 +119,9 @@ def test_user(test_db_session):
         phone_number="(111)-111-1111",
     )
 
-    test_db_session.add(user)
-    test_db_session.flush()
-    test_db_session.refresh(user)
-    return user
-
 
 @pytest.fixture
-def test_todo(test_db_session):
+def test_todo(test_db_session, user_db_entry, todo_db_entry):
     """
     PROVISIONER: Single Test Todo
     Creates a Todo (and its owner) using the unified test_db_session.
@@ -133,18 +129,17 @@ def test_todo(test_db_session):
     # Ensure User 1 exists for the FK constraint
     user = test_db_session.get(Users, 1)
     if not user:
-        user = UserFactory.build(
+        user = user_db_entry(
             id=1,
             username="codingwithrobytest",
             email="codingwithrobytest@email.com",
             role="admin",
         )
-        test_db_session.add(user)
-        test_db_session.flush()
+
+    # Clean up any existing todos for this user (from previous committed tests)
+    # to ensure the fixture returns a predictable state (1 todo).
+    test_db_session.query(Todos).filter(Todos.owner_id == 1).delete()
+    test_db_session.flush()
 
     # Passing owner=user explicitly sets owner_id to user.id (1)
-    todo = TodosFactory.build(owner=user)
-    test_db_session.add(todo)
-    test_db_session.flush()
-    test_db_session.refresh(todo)
-    return todo
+    return todo_db_entry(owner=user)

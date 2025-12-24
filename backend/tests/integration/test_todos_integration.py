@@ -5,6 +5,7 @@ from ...models import Todos
 
 client = TestClient(app)
 
+
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
@@ -23,7 +24,8 @@ def test_read_all_todos(client_with_user, user_with_todos_db_entry):
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
-def test_read_single_todo(client_with_user, todo_db_entry):
+def test_read_single_todo(client_with_user, todo_db_entry, user_with_todos_db_entry):
+    todo_db_entry = todo_db_entry(owner=user_with_todos_db_entry)
     response = client_with_user.get(f"/todos/todo/{todo_db_entry.id}")
     assert response.status_code == status.HTTP_200_OK
 
@@ -34,7 +36,10 @@ def test_read_single_todo(client_with_user, todo_db_entry):
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
-def test_update_todo(client_with_user, todo_db_entry, test_db_session):
+def test_update_todo(
+    client_with_user, todo_db_entry, user_with_todos_db_entry, test_db_session
+):
+    todo_db_entry = todo_db_entry(owner=user_with_todos_db_entry)
     payload = {
         "title": "Updated",
         "description": "Updated",
@@ -45,7 +50,7 @@ def test_update_todo(client_with_user, todo_db_entry, test_db_session):
     response = client_with_user.put(f"/todos/todo/{todo_db_entry.id}", json=payload)
     assert response.status_code == 200
 
-     # Reload the todo from the database in a fresh session
+    # Reload the todo from the database in a fresh session
     updated_todo = test_db_session.get(Todos, todo_db_entry.id)
     test_db_session.refresh(updated_todo)
     assert updated_todo.complete is True
@@ -55,17 +60,22 @@ def test_update_todo(client_with_user, todo_db_entry, test_db_session):
 # -------------------------------------------------
 # INTEGRATION TEST
 # -------------------------------------------------
-def test_delete_todo(client_with_user, todo_db_entry, test_db_session):
+def test_delete_todo(
+    client_with_user, todo_db_entry, user_with_todos_db_entry, test_db_session
+):
+    todo_db_entry = todo_db_entry(owner=user_with_todos_db_entry)
     response = client_with_user.delete(f"/todos/todo/{todo_db_entry.id}")
     assert response.status_code == 200
-    
+
     """Instead of test_db_session.refresh(todo_db_entry), query fresh
     Even though you expect the row to be gone, SQLAlchemy 
     still has the object in the session as a pending delete, 
     so calling test_db_session.get() or test_db_session.refresh() on it will fail."""
     # deleted_todo = test_db_session.get(Todos, todo_db_entry.id)
-    
+
     # Solution: Query the test_db_session with will not pull object in pending state:
-    deleted_todo = test_db_session.query(Todos).filter(Todos.id == todo_db_entry.id).first()
-    
+    deleted_todo = (
+        test_db_session.query(Todos).filter(Todos.id == todo_db_entry.id).first()
+    )
+
     assert deleted_todo is None

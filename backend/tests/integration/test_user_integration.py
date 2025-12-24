@@ -17,6 +17,7 @@ def test_authenticate_user(test_db_session, user_db_entry):
     - DB-backed authentication
     """
 
+    user_db_entry = user_db_entry()
     authenticated = authenticate_user(
         test_db_session,
         username=user_db_entry.username,
@@ -37,6 +38,7 @@ def test_create_access_token_with_real_user(user_db_entry):
     - Token created from real User
     """
 
+    user_db_entry = user_db_entry()
     token = create_access_token(
         username=user_db_entry.username,
         user_id=user_db_entry.id,

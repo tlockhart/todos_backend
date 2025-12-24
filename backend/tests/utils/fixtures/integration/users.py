@@ -3,7 +3,6 @@ from ...factories.auth import UserFactory
 from ...factories.todos import TodosFactory
 
 
-
 @pytest.fixture
 def user_db_entry(object_db_entry):
     """
@@ -13,9 +12,13 @@ def user_db_entry(object_db_entry):
     - Attribute: Adds '_plain_password' to the object. Because the DB only stores
       hashes, this provides the test with the raw password needed for login attempts.
     """
-    new_user = object_db_entry(UserFactory)
-    new_user._plain_password = "Password123!"
-    return new_user
+
+    def _create_user(**kwargs):
+        new_user = object_db_entry(UserFactory, **kwargs)
+        new_user._plain_password = "Password123!"
+        return new_user
+
+    return _create_user
 
 
 @pytest.fixture
