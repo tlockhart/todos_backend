@@ -21,7 +21,15 @@ from .utils.fixtures.integration.db_entry.todos import todo_db_entry
 
 
 # --------------------------------------------------------------------------------------
-# 2. GLOBAL OVERRIDES (Optional / Minimal)
+# 2. GLOBAL OVERRIDES (Infrastructure)
+# --------------------------------------------------------------------------------------
+# These overrides apply to the ENTIRE test suite.
+# They handle "Infrastructure" concerns:
+# 1. Database: Force the app to use the Test Session (SQLite) instead of the real DB.
+# 2. Auth Mechanism: Bypass the cryptographic verification of JWTs (oauth2_bearer).
+#
+# Contrast this with LOCAL overrides in specific test files (like test_admin.py),
+# which handle "Business Logic" (e.g., "Who is the current user?").
 # --------------------------------------------------------------------------------------
 @pytest.fixture(autouse=True)
 def base_dependency_overrides(test_db_session):

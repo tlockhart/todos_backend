@@ -116,3 +116,4 @@ This avoids the mismatch because template0 is a barebones template.
 
 ### pytest -v --tb=short tests/integration/test_todos_with_factory_update.py
 ### pytest -v --tb=short tests/unit/test_users_with_factory_update.py
+### pytest -v --tb=short tests/integration/test_admin.py
