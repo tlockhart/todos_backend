@@ -15,13 +15,7 @@ from .utils.fixtures.integration.db_entry.todos import todo_db_entry
 
 
 # --------------------------------------------------------------------------------------
-# 1. DATABASE SESSION FIXTURE
-# --------------------------------------------------------------------------------------
-# This fixture has been moved to tests/utils/test_db_setup.py for better organization.
-
-
-# --------------------------------------------------------------------------------------
-# 2. GLOBAL OVERRIDES (Infrastructure)
+# 1. GLOBAL OVERRIDES (Infrastructure)
 # --------------------------------------------------------------------------------------
 # These overrides apply to the ENTIRE test suite.
 # They handle "Infrastructure" concerns:
