@@ -53,6 +53,8 @@ def override_get_current_user():
     Advanced integration tests will use 'app.dependency_overrides' to replace
     this with a lambda returning a specific user dictionary.
     """
+    # DJANGO SUBSTITUTION: This helper is likely unnecessary.
+    # Use client.force_login(user) in tests instead of overriding dependencies.
     # Use the Factory to build the user object, ensuring it matches the model structure.
     # We explicitly set values to maintain backward compatibility with tests expecting
     # these specific credentials.
@@ -129,6 +131,9 @@ def test_user(test_db_session, user_db_entry):
 
 @pytest.fixture
 def test_todo(test_db_session, user_db_entry, todo_db_entry):
+    # DJANGO SUBSTITUTION:
+    # user = UserFactory.create(id=1, ...)
+    # return TodoFactory.create(owner=user)
     """
     PROVISIONER: Single Test Todo
     Creates a Todo (and its owner) using the unified test_db_session.
@@ -145,6 +150,7 @@ def test_todo(test_db_session, user_db_entry, todo_db_entry):
 
     # Clean up any existing todos for this user (from previous committed tests)
     # to ensure the fixture returns a predictable state (1 todo).
+    # DJANGO SUBSTITUTION: Manual cleanup is not required with pytest-django's 'db' fixture.
     test_db_session.query(Todos).filter(Todos.owner_id == 1).delete()
     test_db_session.flush()
 
