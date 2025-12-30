@@ -28,4 +28,4 @@ def test_user_model_instantiation():
     assert user.email == "test@example.com"
     assert user.role == "admin"
     assert user.is_active is True
-    assert hasattr(user, "hashed_password")
+    assert user.hashed_password == "hashed_secret"
