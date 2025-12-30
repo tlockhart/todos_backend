@@ -2,7 +2,7 @@ from ...models import Users
 
 
 # ======================================================================================
-# MODEL TESTS (Verifying Business Logic)
+# MODEL TESTS (Verifying Model Structure)
 # ======================================================================================
 def test_user_model_instantiation():
     """
