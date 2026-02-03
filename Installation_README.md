@@ -151,3 +151,26 @@ This avoids the mismatch because template0 is a barebones template.
 
 ### Remove user requirement:
 ## python -m pip config list -v
+
+### Semantec Versioning options
+## 1. Recommended pyproject.toml (file-based versioning, updates __init__.py file in Application)
+## 2. Github tags Update
+<!-- Use Conventional Commits (Angular style) in PR titles/merge commits:
+
+feat: add JWT auth
+fix(db): correct null handling
+perf(api): reduce N+1 queries
+docs: update README
+chore(ci): tweak workflow
+Breaking changes: add ! or BREAKING CHANGE: in body
+Example: feat!: drop Python 3.9 support
+
+Release logic:
+
+feat → minor
+fix/perf → patch
+BREAKING CHANGE → major 
+
+git commit -m "feat: seed version variable" 
+python -m semantic_release version --no-push
+-->
