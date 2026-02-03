@@ -144,8 +144,10 @@ This avoids the mismatch because template0 is a barebones template.
 
 ### Update Changelog:
 ## python -m semantic_release changelog
+
 ### Run safe trial semantic release
 ## python -m semantic_release version --no-push
 
-### Remove user requirment:
+
+### Remove user requirement:
 ## python -m pip config list -v
