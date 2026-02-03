@@ -138,3 +138,14 @@ This avoids the mismatch because template0 is a barebones template.
 
 ### Append to Change Log:
 ## python -m semantic_release changelog
+
+### Add __version__="0.0.0" to backend/__init__.py
+### backend/__init__.py
+
+### Update Changelog:
+## python -m semantic_release changelog
+### Run safe trial semantic release
+## python -m semantic_release version --no-push
+
+### Remove user requirment:
+## python -m pip config list -v
