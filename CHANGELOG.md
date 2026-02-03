@@ -1,9 +1,12 @@
 # CHANGELOG
 
 
-## Unreleased
+
+## v0.0.0 (2026-02-03)
 
 ### Chore
+
+* chore: seed version variable ([`bbb212c`](https://github.com/tlockhart/todos_backend/commit/bbb212c2aa283a2343d38057ac0f09fbaffc2b6a))
 
 * chore: add semantic-release tooling ([`b5496ef`](https://github.com/tlockhart/todos_backend/commit/b5496ef57966fe9a924b5d812683e37a5d9757ef))
 
@@ -112,4 +115,3 @@
 * Chore: Updated Installation_README.md ([`6f533b4`](https://github.com/tlockhart/todos_backend/commit/6f533b4f46a1e54976ea0309d55acb32576aae57))
 
 * Initial commit ([`ab20054`](https://github.com/tlockhart/todos_backend/commit/ab20054587fd3ae1b1b83e838a4bb2744759c8f0))
-
