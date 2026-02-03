@@ -2,9 +2,18 @@
 
 
 
+## v0.1.0 (2026-02-03)
+
+### Feature
+
+* feat: seed version variable ([`3475476`](https://github.com/tlockhart/todos_backend/commit/3475476ae371b7a05fd27083c97a42ba0164be3e))
+
+
 ## v0.0.0 (2026-02-03)
 
 ### Chore
+
+* chore(release): 0.0.0 ([`ade90cb`](https://github.com/tlockhart/todos_backend/commit/ade90cb6c0cae3401ebcaccf46b5270344938027))
 
 * chore: seed version variable ([`bbb212c`](https://github.com/tlockhart/todos_backend/commit/bbb212c2aa283a2343d38057ac0f09fbaffc2b6a))
 
