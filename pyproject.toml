@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "todos-backend"
+dynamic = ["version"]
+
+[tool.setuptools]
+packages = ["backend"]
+
+[tool.setuptools.dynamic]
+version = { attr = "backend.__init__.__version__" }
+
+[tool.semantic_release]
+version_source = "commit"
+version_variable = ["backend/__init__.py:__version__"]
+branch = "main"
+tag_format = "v{version}"
+build_command = "python -m build"
+upload_to_release = true
+upload_to_repository = true
+changelog_components = ["angular"]
+commit_message = "chore(release): {version}"
+
+[tool.semantic_release.remote]
+type = "github"
+token = { env = "GITHUB_TOKEN" }

@@ -16,6 +16,7 @@ password_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
 # DJANGO SUBSTITUTION: class UserFactory(DjangoModelFactory):
 class UserFactory(SQLAlchemyModelFactory):
+    
     class Meta:
         model = Users
         # DJANGO SUBSTITUTION: Remove sqlalchemy_session lines. Django uses the default DB connection automatically.

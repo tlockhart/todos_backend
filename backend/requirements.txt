@@ -1,4 +1,4 @@
-annotated-doc==0.0.4
+Zannotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.0
 argon2-cffi==25.1.0
@@ -56,3 +56,4 @@ tzdata==2025.3
 urllib3==2.6.2
 wcwidth==0.2.5
 yarg==0.1.10
+python-semantic-release==8.7.0

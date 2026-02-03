@@ -56,3 +56,6 @@ tzdata==2025.3
 urllib3==2.6.2
 wcwidth==0.2.5
 yarg==0.1.10
+python-semantic-release>=8,<9
+build>=1.0
+

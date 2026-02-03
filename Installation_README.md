@@ -118,3 +118,23 @@ This avoids the mismatch because template0 is a barebones template.
 ### pytest -v --tb=short tests/unit/test_users_with_factory_update.py
 ### pytest -v --tb=short tests/integration/test_admin.py
 ### pytest -v --tb=short tests/unit/test_user_model.unit.py
+
+### Install python Symantec Release:
+## py -3 -m pip install --upgrade pip
+## py -3 -m pip install python-semantic-release
+## py -3 -m semantic_release --help
+### Then run the command via the module name:
+## py -3 -m semantic_release generate-config
+## python -m pip install -U python-semantic-release --no-user
+### Generate .toml
+## python -m semantic_release generate-config
+## python -m semantic_release generate-config --pyproject >> pyproject.toml
+
+### Install Dependencies
+## python -m pip install -U pip setuptools wheel build python-semantic-release --no-user
+
+### Create Change log:
+## python -m semantic_release publish
+
+### Append to Change Log:
+## python -m semantic_release changelog
